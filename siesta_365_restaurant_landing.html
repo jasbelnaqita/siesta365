@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Siesta 365 — Family Restaurant in Tbilisi</title>
+  <link rel="icon" type="image/png" href="images/siesta365-logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --cream:#fff7e8;
+      --warm:#f5c542;
+      --amber:#e69a16;
+      --dark:#17120b;
+      --brown:#5d371b;
+      --muted:#74685a;
+      --card:#fffaf0;
+      --line:rgba(93,55,27,.16);
+      --shadow:0 24px 70px rgba(37,22,9,.18);
+      --radius:28px;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--cream);
+      color:var(--dark);
+      overflow-x:hidden;
+    }
+    img{max-width:100%;display:block}
+    a{text-decoration:none;color:inherit}
+    .container{width:min(1180px,92%);margin:auto}
+
+    /* ── NAV ── */
+    .nav{
+      position:fixed;top:18px;left:50%;transform:translateX(-50%);
+      width:min(1180px,92%);z-index:150;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:10px 14px 10px 16px;
+      border:1px solid rgba(255,255,255,.24);
+      border-radius:999px;
+      background:rgba(23,18,11,.78);
+      backdrop-filter:blur(20px);
+      color:#fff;
+      box-shadow:0 18px 40px rgba(0,0,0,.22);
+    }
+    .brand{display:flex;gap:10px;align-items:center;font-weight:800;letter-spacing:.2px;color:#fff}
+    .brand-logo-img{
+      width:36px;height:36px;border-radius:50%;
+      object-fit:cover;flex-shrink:0;
+      border:1.5px solid rgba(255,255,255,.18);
+    }
+    .nav-links{display:flex;gap:18px;align-items:center;font-size:14px;color:rgba(255,255,255,.82)}
+    .nav-links a:not(.nav-cta){
+      position:relative;padding-bottom:2px;
+      transition:color .2s ease;
+    }
+    .nav-links a:not(.nav-cta)::after{
+      content:"";position:absolute;left:0;bottom:0;
+      width:0;height:1px;
+      background:rgba(255,255,255,.6);
+      transition:width .25s ease;
+    }
+    .nav-links a:not(.nav-cta):hover{color:#fff}
+    .nav-links a:not(.nav-cta):hover::after{width:100%}
+
+    /* Language toggle */
+    .lang-btn{
+      padding:8px 14px;border-radius:999px;
+      background:rgba(255,255,255,.1);color:rgba(255,255,255,.88);
+      border:1px solid rgba(255,255,255,.22);
+      font-size:13px;font-weight:800;cursor:pointer;
+      font-family:inherit;letter-spacing:.04em;
+      transition:.2s ease;
+    }
+    .lang-btn:hover{background:rgba(255,255,255,.2);color:#fff}
+
+    /* Burger button */
+    .burger-btn{
+      display:none;
+      flex-direction:column;justify-content:center;align-items:center;
+      gap:5px;width:42px;height:42px;
+      background:rgba(255,255,255,.1);
+      border:1px solid rgba(255,255,255,.2);
+      border-radius:12px;cursor:pointer;
+      flex-shrink:0;
+    }
+    .burger-btn span{
+      display:block;width:18px;height:2px;
+      background:#fff;border-radius:2px;
+      transition:.32s cubic-bezier(.4,0,.2,1);
+    }
+    .burger-btn.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+    .burger-btn.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+    .burger-btn.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+    /* ── MOBILE FULL-SCREEN MENU ── */
+    .mobile-menu{
+      position:fixed;inset:0;z-index:200;
+      background:rgba(15,9,4,.97);
+      backdrop-filter:blur(24px);
+      display:flex;flex-direction:column;
+      opacity:0;pointer-events:none;
+      transition:opacity .35s ease;
+    }
+    .mobile-menu.open{opacity:1;pointer-events:all}
+
+    .mobile-menu-top{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:18px 22px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .mobile-brand{display:flex;gap:10px;align-items:center;font-weight:800;color:#fff;font-size:16px}
+    .mobile-close{
+      width:44px;height:44px;
+      display:grid;place-items:center;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:12px;color:#fff;
+      font-size:22px;cursor:pointer;
+      line-height:1;
+      transition:.2s ease;
+    }
+    .mobile-close:hover{background:rgba(255,255,255,.14)}
+
+    .mobile-nav{
+      flex:1;display:flex;flex-direction:column;
+      justify-content:center;align-items:center;
+      gap:6px;padding:36px 28px;
+    }
+    .mobile-nav a{
+      font-family:Playfair Display,serif;
+      font-size:clamp(42px,11vw,62px);
+      font-weight:700;
+      color:rgba(255,255,255,.75);
+      letter-spacing:-.5px;
+      line-height:1.18;
+      transition:color .2s ease;
+      opacity:0;
+      transform:translateY(18px);
+      transition:color .2s ease, opacity .4s ease, transform .4s ease;
+    }
+    .mobile-menu.open .mobile-nav a{opacity:1;transform:translateY(0)}
+    .mobile-menu.open .mobile-nav a:nth-child(1){transition-delay:.08s}
+    .mobile-menu.open .mobile-nav a:nth-child(2){transition-delay:.14s}
+    .mobile-menu.open .mobile-nav a:nth-child(3){transition-delay:.20s}
+    .mobile-nav a:hover{color:#FFD64A}
+
+    .mobile-menu-bottom{
+      padding:24px 22px;
+      border-top:1px solid rgba(255,255,255,.08);
+      display:flex;align-items:center;justify-content:space-between;
+      gap:12px;flex-wrap:wrap;
+    }
+    .mobile-info{color:rgba(255,255,255,.45);font-size:13px;line-height:1.6}
+    .mobile-info a{color:rgba(255,255,255,.7);font-weight:700}
+    .mobile-lang-btn{
+      padding:11px 22px;border-radius:999px;
+      background:rgba(255,255,255,.1);color:rgba(255,255,255,.88);
+      border:1px solid rgba(255,255,255,.22);
+      font-size:14px;font-weight:800;cursor:pointer;
+      font-family:inherit;letter-spacing:.06em;
+      transition:.2s ease;
+    }
+    .mobile-lang-btn:hover{background:rgba(255,255,255,.18);color:#fff}
+
+    /* ── HERO ── */
+    .hero{
+      min-height:100vh;
+      display:grid;align-items:center;
+      padding:130px 0 70px;
+      position:relative;
+      background:
+        radial-gradient(circle at 9% 14%, rgba(245,197,66,.15), transparent 28%),
+        radial-gradient(ellipse 70% 110% at 106% 52%, #FFD64A 0%, #E8A018 20%, rgba(150,75,12,.48) 46%, transparent 66%),
+        radial-gradient(ellipse 62% 100% at -6% 48%, #110803 0%, rgba(26,13,5,.9) 44%, transparent 68%),
+        radial-gradient(circle at 54% 78%, rgba(165,85,14,.38), transparent 40%),
+        linear-gradient(122deg, #1a0e06 0%, #2d1708 32%, #7a420e 56%, #c8900e 74%, #FFD64A 100%);
+      color:#fff;
+      overflow:hidden;
+    }
+    .hero::after{
+      content:"";position:absolute;inset:auto -10% -28% 35%;height:58%;
+      background:radial-gradient(circle,rgba(255,255,255,.32),transparent 62%);
+      filter:blur(22px);opacity:.45;pointer-events:none;
+    }
+    .hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:48px;align-items:center;position:relative;z-index:2}
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:9px 14px;border-radius:999px;
+      background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+      font-size:13px;font-weight:700;color:#ffe9a4;margin-bottom:24px;
+      white-space:nowrap;
+    }
+    .eyebrow .dot{
+      width:8px;height:8px;border-radius:50%;flex-shrink:0;
+      background:#41d36e;box-shadow:0 0 0 5px rgba(65,211,110,.14);
+    }
+    h1{
+      font-family:Playfair Display,serif;
+      font-size:clamp(52px,7vw,94px);
+      line-height:.93;letter-spacing:-2.4px;
+      max-width:750px;
+    }
+    .hero p{font-size:19px;line-height:1.75;color:rgba(255,255,255,.82);max-width:620px;margin:28px 0 34px}
+    .actions{display:flex;gap:14px;flex-wrap:wrap}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:9px;
+      padding:14px 22px;border-radius:999px;font-weight:900;
+      transition:.25s ease;box-shadow:0 14px 35px rgba(0,0,0,.15);
+      cursor:pointer;font-size:15px;
+    }
+    .btn-primary{background:#fff;color:#241208}
+    .btn-secondary{background:rgba(255,255,255,.13);color:#fff;border:1px solid rgba(255,255,255,.25)}
+    .btn:hover{transform:translateY(-3px)}
+
+    /* Delivery icons inside buttons */
+    .delivery-icon{
+      width:26px;height:26px;border-radius:50%;
+      object-fit:cover;flex-shrink:0;
+      display:block;
+    }
+
+    /* Wolt button */
+    .btn-wolt{
+      background:rgba(255,255,255,.11);color:#fff;
+      border:1.5px solid rgba(0,195,234,.4);
+    }
+    .btn-wolt:hover{
+      background:#00C3EA;border-color:#00C3EA;color:#fff;
+      box-shadow:0 14px 38px rgba(0,195,234,.38);
+    }
+
+    /* Glovo button */
+    .btn-glovo{
+      background:rgba(255,255,255,.11);color:#fff;
+      border:1.5px solid rgba(255,194,68,.4);
+    }
+    .btn-glovo:hover{
+      background:#FFC244;border-color:#FFC244;color:#1a0f00;
+      box-shadow:0 14px 38px rgba(255,194,68,.42);
+    }
+
+    .hero-meta{display:flex;gap:18px;flex-wrap:wrap;margin-top:34px;color:rgba(255,255,255,.78);font-size:14px}
+    .hero-meta b{color:#fff}
+
+    .hero-card{position:relative}
+    .food-stack{
+      position:relative;border-radius:40px;overflow:hidden;box-shadow:var(--shadow);
+      border:8px solid rgba(255,255,255,.18);transform:rotate(1deg);
+      background:#fff;
+    }
+    .food-stack img{width:100%;height:610px;object-fit:cover}
+    .floating-card{
+      position:absolute;left:-26px;bottom:34px;width:min(270px,70%);
+      background:rgba(255,250,240,.95);color:var(--dark);
+      padding:18px;border-radius:24px;box-shadow:var(--shadow);
+    }
+    .floating-card strong{font-family:Playfair Display,serif;font-size:24px;display:block;margin-bottom:4px}
+    .floating-card p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+
+    /* ── SECTIONS ── */
+    section{padding:96px 0}
+    .section-head{display:flex;justify-content:space-between;gap:28px;align-items:end;margin-bottom:44px}
+    .section-kicker{color:var(--amber);font-weight:900;text-transform:uppercase;letter-spacing:.12em;font-size:12px;margin-bottom:10px}
+    h2{font-family:Playfair Display,serif;font-size:clamp(34px,4vw,58px);line-height:1.02;letter-spacing:-1px;color:#211208}
+    .section-head p{max-width:520px;color:var(--muted);line-height:1.8}
+
+    .about-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:34px;align-items:stretch}
+    .about-photo{border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);min-height:420px}
+    .about-photo img{height:100%;width:100%;object-fit:cover}
+    .about-copy{
+      background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+      padding:44px;box-shadow:0 18px 50px rgba(93,55,27,.08);
+    }
+    .about-copy p{color:var(--muted);line-height:1.85;margin:18px 0}
+    .mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:28px}
+    .stat{background:var(--cream);border-radius:20px;padding:18px;border:1px solid var(--line)}
+    .stat b{font-size:24px;color:var(--brown)}
+    .stat-link{transition:.2s ease;cursor:pointer}
+    .stat-link:hover{background:var(--line);border-color:rgba(93,55,27,.28)}
+    .stat span{display:block;color:var(--muted);font-size:13px;margin-top:4px}
+
+    .menu{background:#fff3d1}
+    .menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+    .dish{
+      background:#fff;border-radius:28px;overflow:hidden;border:1px solid rgba(93,55,27,.12);
+      box-shadow:0 18px 48px rgba(93,55,27,.12);transition:.25s ease;
+    }
+    .dish:hover{transform:translateY(-6px)}
+    .dish img{height:240px;width:100%;object-fit:cover}
+    .dish-body{padding:22px}
+    .dish-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+    .dish h3{font-family:Playfair Display,serif;font-size:25px}
+    .tag{font-size:12px;font-weight:900;color:#8b4d0b;background:#fff1bd;border-radius:999px;padding:7px 10px;white-space:nowrap}
+    .dish p{color:var(--muted);line-height:1.65;font-size:14px}
+    .menu-more{
+      margin-top:36px;text-align:center;
+      font-size:17px;font-style:italic;
+      color:rgba(93,55,27,.52);
+      font-family:Playfair Display,serif;
+      letter-spacing:.01em;
+    }
+
+    .why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+    .why-card{background:#fff;border:1px solid var(--line);border-radius:26px;padding:28px;box-shadow:0 18px 44px rgba(93,55,27,.08)}
+    .icon{width:48px;height:48px;border-radius:17px;background:linear-gradient(135deg,#ffd84f,#e58a12);display:grid;place-items:center;font-size:23px;margin-bottom:18px}
+    .why-card h3{font-size:18px;margin-bottom:10px}
+    .why-card p{color:var(--muted);line-height:1.65;font-size:14px}
+
+    .gallery-grid{display:grid;grid-template-columns:1.2fr .8fr .8fr;grid-auto-rows:230px;gap:18px}
+    .gallery-grid img{width:100%;height:100%;object-fit:cover;border-radius:26px;box-shadow:0 16px 38px rgba(93,55,27,.12)}
+    .gallery-grid img:first-child{grid-row:span 2}
+
+    .testimonials{background:#191008;color:#fff}
+    .testimonials h2{color:#fff}
+    .testimonials .section-head p{color:rgba(255,255,255,.68)}
+    .review-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+    .review{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:26px;padding:28px}
+    .stars{color:#ffd34e;letter-spacing:2px;margin-bottom:18px}
+    .review p{color:rgba(255,255,255,.78);line-height:1.75;margin-bottom:20px}
+    .review b{color:#fff}
+
+    .visit-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:stretch}
+    .visit-card,.reservation-card{border-radius:var(--radius);padding:42px;border:1px solid var(--line);box-shadow:var(--shadow)}
+    .visit-card{background:#fff}
+    .reservation-card{background:linear-gradient(135deg,#2a1609,#5a2e10);color:#fff;position:relative;overflow:hidden}
+    .reservation-card::after{content:"";position:absolute;right:-110px;top:-110px;width:260px;height:260px;background:#ffc93d;border-radius:50%;opacity:.22;pointer-events:none}
+    .visit-row{display:flex;justify-content:space-between;gap:18px;padding:18px 0;border-bottom:1px solid var(--line);color:var(--muted)}
+    .visit-row b{color:var(--dark)}
+    .reservation-card h2{color:#fff;margin-bottom:18px}
+    .reservation-card p{color:rgba(255,255,255,.78);line-height:1.75;margin-bottom:28px}
+    .contact-line{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+    .contact-pill{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:11px 14px;font-weight:800}
+
+    footer{padding:28px 0 28px;color:var(--muted);text-align:center}
+    .made-by{
+      padding:0 0 22px;text-align:center;
+    }
+    .made-by-link{
+      font-size:11px;color:rgba(116,104,90,.38);
+      letter-spacing:.06em;
+      border-bottom:1px solid transparent;
+      transition:.25s ease;
+    }
+    .made-by-link:hover{color:rgba(116,104,90,.7);border-bottom-color:rgba(116,104,90,.3)}
+    .footer-address{
+      display:inline-block;margin-top:8px;
+      color:var(--muted);font-size:13px;
+      border-bottom:1px solid transparent;
+      transition:.2s ease;
+    }
+    .footer-address:hover{color:var(--amber);border-bottom-color:var(--amber)}
+    .meta-address{
+      color:inherit;
+      border-bottom:1px solid rgba(255,255,255,.35);
+      transition:.2s ease;
+    }
+    .meta-address:hover{border-bottom-color:rgba(255,255,255,.85)}
+    .address-link{
+      color:var(--dark);
+      border-bottom:1px solid rgba(93,55,27,.3);
+      transition:.2s ease;
+    }
+    .address-link:hover{color:var(--amber);border-bottom-color:var(--amber)}
+    .contact-pill-link{transition:.2s ease}
+    .contact-pill-link:hover{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.3)}
+
+    /* ── RESPONSIVE ── */
+    @media (max-width:900px){
+      .nav-links a{display:none}
+      .lang-btn{display:none}
+      .burger-btn{display:flex}
+      .hero{
+        padding-top:110px;
+        background:
+          radial-gradient(ellipse 100% 50% at 50% 100%, #FFD64A 0%, #E0950A 22%, rgba(140,65,10,.5) 44%, transparent 62%),
+          radial-gradient(circle at 12% 18%, rgba(245,197,66,.12), transparent 28%),
+          linear-gradient(180deg, #1a0e06 0%, #2e1708 40%, #7a420e 62%, #c8900e 78%, #FFD64A 100%);
+      }
+      .hero-grid,.about-grid,.visit-grid{grid-template-columns:1fr}
+      .food-stack img{height:430px}
+      .menu-grid,.why-grid,.review-grid{grid-template-columns:1fr 1fr}
+      .gallery-grid{grid-template-columns:1fr 1fr;grid-auto-rows:190px}
+      .section-head{display:block}
+      .section-head p{margin-top:16px}
+    }
+    @media (max-width:620px){
+      .nav{top:10px;width:94%;padding:9px 10px 9px 14px}
+      .brand span:last-child{display:none}
+      .hero p{font-size:16px}
+      .actions .btn{width:100%}
+      .hero-meta{display:grid;gap:10px}
+      .floating-card{left:14px;bottom:18px}
+      section{padding:68px 0}
+      .about-copy,.visit-card,.reservation-card{padding:28px}
+      .mini-stats,.menu-grid,.why-grid,.review-grid,.gallery-grid{grid-template-columns:1fr}
+      .gallery-grid img:first-child{grid-row:span 1}
+      .dish img{height:220px}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- FULL-SCREEN MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-top">
+      <a href="#top" class="mobile-brand" onclick="closeMenu()">
+        <img src="images/siesta365-logo.png" alt="Siesta 365" class="brand-logo-img">
+        <span>Siesta 365</span>
+      </a>
+      <button class="mobile-close" onclick="closeMenu()">✕</button>
+    </div>
+    <nav class="mobile-nav">
+      <a href="#menu" onclick="closeMenu()" data-i18n="nav_menu">Menu</a>
+      <a href="#gallery" onclick="closeMenu()" data-i18n="nav_gallery">Gallery</a>
+      <a href="#visit" onclick="closeMenu()" data-i18n="nav_visit">Visit</a>
+    </nav>
+    <div class="mobile-menu-bottom">
+      <div class="mobile-info">
+        <span data-i18n="visit_row4_label">Phone</span>: <a href="tel:593128000">593 12 80 00</a><br>
+        Mon–Sat · 10:00–21:00<br>
+        <a href="https://maps.app.goo.gl/szxVBvJgVRG7vabi9" target="_blank" data-i18n="mobile_address">📍 3 Ana Politkovskaia St</a>
+      </div>
+      <button class="mobile-lang-btn" data-lang-btn onclick="toggleLang()">GE</button>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="#top" class="brand">
+      <img src="images/siesta365-logo.png" alt="Siesta 365" class="brand-logo-img">
+      <span>Siesta 365</span>
+    </a>
+    <div class="nav-links">
+      <a href="#menu" data-i18n="nav_menu">Menu</a>
+      <a href="#gallery" data-i18n="nav_gallery">Gallery</a>
+      <a href="#visit" data-i18n="nav_visit">Visit</a>
+      <button class="lang-btn" data-lang-btn onclick="toggleLang()">GE</button>
+    </div>
+    <button class="burger-btn" id="burgerBtn" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero" id="top">
+    <div class="container hero-grid">
+      <div>
+        <div class="eyebrow">
+          <span class="dot"></span>
+          <span data-i18n="eyebrow">Open Monday to Saturday · 10:00–21:00</span>
+        </div>
+        <h1 data-i18n="hero_h1">Warm family food in the heart of Tbilisi.</h1>
+        <p data-i18n="hero_p">Siesta 365 is a cozy family restaurant serving home-style meals, fresh salads, wraps, baked bites and quick comfort food made for everyday lunches, relaxed dinners and friendly meetups.</p>
+        <div class="actions">
+          <a href="https://wolt.com/ka/geo/tbilisi/restaurant/siesta-365" target="_blank" class="btn btn-wolt">
+            <img src="images/wolt-logo.png" alt="Wolt" class="delivery-icon">
+            <span data-i18n="btn_wolt">Order in Wolt</span>
+          </a>
+          <a href="https://glovo.go.link/open?link_type=store&store_id=548578&adjust_t=s321jkn" target="_blank" class="btn btn-glovo">
+            <img src="images/glovo-logo.png" alt="Glovo" class="delivery-icon">
+            <span data-i18n="btn_glovo">Order in Glovo</span>
+          </a>
+          <a href="tel:593128000" class="btn btn-secondary" data-i18n="btn_call">Call 593 12 80 00</a>
+        </div>
+        <div class="hero-meta">
+          <span><b data-i18n="meta_location_key">Location:</b> <a href="https://maps.app.goo.gl/szxVBvJgVRG7vabi9" target="_blank" class="meta-address" data-i18n="meta_location_val">3 Ana Politkovskaia St, Tbilisi</a></span>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="food-stack">
+          <img src="images/2025-09-02.webp" alt="Siesta 365 restaurant terrace in Tbilisi">
+        </div>
+        <div class="floating-card">
+          <strong data-i18n="float_title">Fresh, fast, cozy.</strong>
+          <p data-i18n="float_p">Ready meals, homemade flavors and a welcoming place to stop by any day.</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="container about-grid">
+      <div class="about-photo">
+        <img src="images/2025-11-11 (2).webp" alt="Fresh salad at Siesta 365">
+      </div>
+      <div class="about-copy">
+        <div class="section-kicker" data-i18n="about_kicker">About Siesta 365</div>
+        <h2 data-i18n="about_h2">A relaxed place for real everyday food.</h2>
+        <p data-i18n="about_p1">Siesta 365 brings together the comfort of a family kitchen with the speed and variety people need during a busy day in Tbilisi. The menu is built around satisfying ready meals, fresh ingredients and familiar flavors that feel easy, honest and generous.</p>
+        <p data-i18n="about_p2">Come in for a quick bite, meet a friend for lunch, or stop by with family for something warm, fresh and simple.</p>
+        <div class="mini-stats">
+          <div class="stat"><b>365</b><span data-i18n="stat1">Everyday comfort</span></div>
+          <div class="stat"><b>10–21</b><span data-i18n="stat2">Opening hours</span></div>
+          <a href="https://maps.app.goo.gl/szxVBvJgVRG7vabi9" target="_blank" class="stat stat-link"><b data-i18n="stat3_val">Tbilisi</b><span data-i18n="stat3">Local restaurant</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MENU -->
+  <section class="menu" id="menu">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker" data-i18n="menu_kicker">Featured menu</div>
+          <h2 data-i18n="menu_h2">Signature bites for every mood.</h2>
+        </div>
+        <p data-i18n="menu_p">From fresh salads to baked comfort food and quick lunch favorites, Siesta 365 is made for people who want something tasty without waiting too long.</p>
+      </div>
+      <div class="menu-grid">
+        <article class="dish">
+          <img src="images/unnamed (2).webp" alt="Club sandwich">
+          <div class="dish-body">
+            <div class="dish-top"><h3 data-i18n="dish1_name">Club Sandwich</h3><span class="tag" data-i18n="dish1_tag">Quick bite</span></div>
+            <p data-i18n="dish1_p">Soft bread layered with fresh vegetables, cheese and savory fillings — ideal for lunch or takeaway.</p>
+          </div>
+        </article>
+        <article class="dish">
+          <img src="images/unnamed (1).webp" alt="Chicken wrap">
+          <div class="dish-body">
+            <div class="dish-top"><h3 data-i18n="dish2_name">Chicken Wrap</h3><span class="tag" data-i18n="dish2_tag">Fresh</span></div>
+            <p data-i18n="dish2_p">A satisfying wrap with tender chicken, crisp cucumber, tomato and greens in a soft tortilla.</p>
+          </div>
+        </article>
+        <article class="dish">
+          <img src="images/unnamed.webp" alt="Baked pastry">
+          <div class="dish-body">
+            <div class="dish-top"><h3 data-i18n="dish3_name">Baked Pastry</h3><span class="tag" data-i18n="dish3_tag">Homestyle</span></div>
+            <p data-i18n="dish3_p">Golden, warm and comforting — the kind of simple baked food that feels homemade.</p>
+          </div>
+        </article>
+        <article class="dish">
+          <img src="images/2025-11-11 (2).webp" alt="Greek-style salad">
+          <div class="dish-body">
+            <div class="dish-top"><h3 data-i18n="dish4_name">Fresh Salad Bowl</h3><span class="tag" data-i18n="dish4_tag">Light</span></div>
+            <p data-i18n="dish4_p">Crisp lettuce, cucumber, tomato, olives, onion and cheese for a bright, refreshing meal.</p>
+          </div>
+        </article>
+        <article class="dish">
+          <img src="images/2025-11-11 (1).webp" alt="Burger in takeaway box">
+          <div class="dish-body">
+            <div class="dish-top"><h3 data-i18n="dish5_name">Classic Burger</h3><span class="tag" data-i18n="dish5_tag">Comfort</span></div>
+            <p data-i18n="dish5_p">A juicy, cheesy favorite served ready to enjoy in-house or on the go.</p>
+          </div>
+        </article>
+        <article class="dish">
+          <img src="images/2025-11-11.webp" alt="Tuna salad bowl">
+          <div class="dish-body">
+            <div class="dish-top"><h3 data-i18n="dish6_name">Protein Bowl</h3><span class="tag" data-i18n="dish6_tag">Balanced</span></div>
+            <p data-i18n="dish6_p">A colorful bowl with greens, tuna, corn, cucumber and potatoes — filling but still fresh.</p>
+          </div>
+        </article>
+      </div>
+      <p class="menu-more" data-i18n="menu_more">& much more on our daily menu — ask us what's fresh today.</p>
+    </div>
+  </section>
+
+  <!-- WHY -->
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker" data-i18n="why_kicker">Why choose us</div>
+          <h2 data-i18n="why_h2">Made to feel easy, warm and reliable.</h2>
+        </div>
+      </div>
+      <div class="why-grid">
+        <div class="why-card"><div class="icon">🥗</div><h3 data-i18n="why1_h3">Fresh daily variety</h3><p data-i18n="why1_p">A broad selection of ready meals, salads, wraps and comfort food for different tastes.</p></div>
+        <div class="why-card"><div class="icon">🍽️</div><h3 data-i18n="why2_h3">Family atmosphere</h3><p data-i18n="why2_p">A relaxed, welcoming space where guests can stop by for a casual meal any day.</p></div>
+        <div class="why-card"><div class="icon">⚡</div><h3 data-i18n="why3_h3">Quick service</h3><p data-i18n="why3_p">Perfect for lunch breaks, takeaway orders and people who want good food without long waits.</p></div>
+        <div class="why-card"><div class="icon">📍</div><h3 data-i18n="why4_h3">Local in Tbilisi</h3><p data-i18n="why4_p">Easy to visit, easy to call, and open Monday to Saturday from morning until evening.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section id="gallery">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker" data-i18n="gallery_kicker">Gallery</div>
+          <h2 data-i18n="gallery_h2">Real food, real Siesta mood.</h2>
+        </div>
+        <p data-i18n="gallery_p">Bright dishes, simple packaging, cozy outdoor seating and the warm local feel of Siesta 365.</p>
+      </div>
+      <div class="gallery-grid">
+        <img src="images/2025-09-02.webp" alt="Siesta 365 exterior">
+        <img src="images/unnamed (1).webp" alt="Chicken wrap">
+        <img src="images/2025-11-11 (2).webp" alt="Salad bowl">
+        <img src="images/2025-11-11 (1).webp" alt="Burger">
+        <img src="images/2025-11-11.webp" alt="Protein bowl">
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker" data-i18n="test_kicker">Guest words</div>
+          <h2 data-i18n="test_h2">People come back for the comfort.</h2>
+        </div>
+        <p data-i18n="test_p">Believable, simple restaurant experiences focused on taste, convenience and warm service.</p>
+      </div>
+      <div class="review-grid">
+        <div class="review"><div class="stars">★★★★★</div><p data-i18n="review1_p">"A great place for a quick lunch. The food feels fresh, the portions are good, and the atmosphere is very friendly."</p><b>Nino K.</b></div>
+        <div class="review"><div class="stars">★★★★★</div><p data-i18n="review2_p">"We stopped by with family and everyone found something they liked. Cozy place, nice service and tasty homemade-style food."</p><b>Giorgi M.</b></div>
+        <div class="review"><div class="stars">★★★★★</div><p data-i18n="review3_p">"Perfect for takeaway or sitting outside for a relaxed bite. The wraps and salads are fresh and really convenient."</p><b>Mariam T.</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VISIT -->
+  <section id="visit">
+    <div class="container visit-grid">
+      <div class="visit-card">
+        <div class="section-kicker" data-i18n="visit_kicker">Visit us</div>
+        <h2 data-i18n="visit_h2">Stop by Siesta 365 in Tbilisi.</h2>
+        <div class="visit-row"><span data-i18n="visit_address_label">Address</span><b><a href="https://maps.app.goo.gl/szxVBvJgVRG7vabi9" target="_blank" class="address-link" data-i18n="visit_address_val">3 Ana Politkovskaia St, Tbilisi</a></b></div>
+        <div class="visit-row"><span data-i18n="visit_row1_label">City / Area</span><b data-i18n="visit_row1_val">Tbilisi</b></div>
+        <div class="visit-row"><span data-i18n="visit_row2_label">Opening days</span><b data-i18n="visit_row2_val">Monday to Saturday</b></div>
+        <div class="visit-row"><span data-i18n="visit_row3_label">Opening hours</span><b>10:00–21:00</b></div>
+        <div class="visit-row"><span data-i18n="visit_row4_label">Phone</span><b><a href="tel:593128000" class="address-link">593 12 80 00</a></b></div>
+      </div>
+      <div class="reservation-card">
+        <div class="section-kicker" data-i18n="res_kicker">Reservation</div>
+        <h2 data-i18n="res_h2">Ready for a warm meal?</h2>
+        <p data-i18n="res_p">Order via Wolt or Glovo for quick delivery, or call us to reserve a table and ask about today's ready meals.</p>
+        <div class="actions">
+          <a href="https://wolt.com/ka/geo/tbilisi/restaurant/siesta-365" target="_blank" class="btn btn-wolt">
+            <img src="images/wolt-logo.png" alt="Wolt" class="delivery-icon">
+            <span data-i18n="btn_wolt">Order in Wolt</span>
+          </a>
+          <a href="https://glovo.go.link/open?link_type=store&store_id=548578&adjust_t=s321jkn" target="_blank" class="btn btn-glovo">
+            <img src="images/glovo-logo.png" alt="Glovo" class="delivery-icon">
+            <span data-i18n="btn_glovo">Order in Glovo</span>
+          </a>
+        </div>
+        <div class="contact-line">
+          <a href="tel:593128000" class="contact-pill contact-pill-link">593 12 80 00</a>
+          <a href="https://maps.app.goo.gl/szxVBvJgVRG7vabi9" target="_blank" class="contact-pill contact-pill-link" data-i18n="contact_address">📍 3 Ana Politkovskaia St</a>
+          <span class="contact-pill">10:00–21:00</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div data-i18n="footer">© 2026 Siesta 365 · Family restaurant in Tbilisi</div>
+      <a href="https://maps.app.goo.gl/szxVBvJgVRG7vabi9" target="_blank" class="footer-address" data-i18n="footer_address">📍 3 Ana Politkovskaia St, Tbilisi</a>
+    </div>
+  </footer>
+  <div class="made-by">
+    <a href="https://wa.me/380967070264" target="_blank" class="made-by-link">Website by Jasmin Belnaqita</a>
+  </div>
+
+  <script>
+    const translations = {
+      en: {
+        nav_menu:"Menu", nav_gallery:"Gallery", nav_visit:"Visit",
+        eyebrow:"Open Monday to Saturday · 10:00–21:00",
+        hero_h1:"Warm family food in the heart of Tbilisi.",
+        hero_p:"Siesta 365 is a cozy family restaurant serving home-style meals, fresh salads, wraps, baked bites and quick comfort food made for everyday lunches, relaxed dinners and friendly meetups.",
+        btn_wolt:"Order in Wolt", btn_glovo:"Order in Glovo", btn_call:"Call 593 12 80 00",
+        meta_cuisine_key:"Cuisine:", meta_cuisine_val:"Home food, any type",
+        meta_location_key:"Location:", meta_location_val:"3 Ana Politkovskaia St, Tbilisi",
+        meta_style_key:"Style:", meta_style_val:"Family restaurant",
+        float_title:"Fresh, fast, cozy.",
+        float_p:"Ready meals, homemade flavors and a welcoming place to stop by any day.",
+        about_kicker:"About Siesta 365",
+        about_h2:"A relaxed place for real everyday food.",
+        about_p1:"Siesta 365 brings together the comfort of a family kitchen with the speed and variety people need during a busy day in Tbilisi. The menu is built around satisfying ready meals, fresh ingredients and familiar flavors that feel easy, honest and generous.",
+        about_p2:"Come in for a quick bite, meet a friend for lunch, or stop by with family for something warm, fresh and simple.",
+        stat1:"Everyday comfort", stat2:"Opening hours", stat3:"Local restaurant", stat3_val:"Tbilisi",
+        menu_kicker:"Featured menu",
+        menu_h2:"Signature bites for every mood.",
+        menu_p:"From fresh salads to baked comfort food and quick lunch favorites, Siesta 365 is made for people who want something tasty without waiting too long.",
+        menu_more:"& much more on our daily menu — ask us what's fresh today.",
+        dish1_name:"Club Sandwich", dish1_tag:"Quick bite",
+        dish1_p:"Soft bread layered with fresh vegetables, cheese and savory fillings — ideal for lunch or takeaway.",
+        dish2_name:"Chicken Wrap", dish2_tag:"Fresh",
+        dish2_p:"A satisfying wrap with tender chicken, crisp cucumber, tomato and greens in a soft tortilla.",
+        dish3_name:"Baked Pastry", dish3_tag:"Homestyle",
+        dish3_p:"Golden, warm and comforting — the kind of simple baked food that feels homemade.",
+        dish4_name:"Fresh Salad Bowl", dish4_tag:"Light",
+        dish4_p:"Crisp lettuce, cucumber, tomato, olives, onion and cheese for a bright, refreshing meal.",
+        dish5_name:"Classic Burger", dish5_tag:"Comfort",
+        dish5_p:"A juicy, cheesy favorite served ready to enjoy in-house or on the go.",
+        dish6_name:"Protein Bowl", dish6_tag:"Balanced",
+        dish6_p:"A colorful bowl with greens, tuna, corn, cucumber and potatoes — filling but still fresh.",
+        why_kicker:"Why choose us",
+        why_h2:"Made to feel easy, warm and reliable.",
+        why1_h3:"Fresh daily variety", why1_p:"A broad selection of ready meals, salads, wraps and comfort food for different tastes.",
+        why2_h3:"Family atmosphere", why2_p:"A relaxed, welcoming space where guests can stop by for a casual meal any day.",
+        why3_h3:"Quick service", why3_p:"Perfect for lunch breaks, takeaway orders and people who want good food without long waits.",
+        why4_h3:"Local in Tbilisi", why4_p:"Easy to visit, easy to call, and open Monday to Saturday from morning until evening.",
+        gallery_kicker:"Gallery",
+        gallery_h2:"Real food, real Siesta mood.",
+        gallery_p:"Bright dishes, simple packaging, cozy outdoor seating and the warm local feel of Siesta 365.",
+        test_kicker:"Guest words",
+        test_h2:"People come back for the comfort.",
+        test_p:"Believable, simple restaurant experiences focused on taste, convenience and warm service.",
+        review1_p:"“A great place for a quick lunch. The food feels fresh, the portions are good, and the atmosphere is very friendly.”",
+        review2_p:"“We stopped by with family and everyone found something they liked. Cozy place, nice service and tasty homemade-style food.”",
+        review3_p:"“Perfect for takeaway or sitting outside for a relaxed bite. The wraps and salads are fresh and really convenient.”",
+        visit_address_label:"Address", visit_address_val:"3 Ana Politkovskaia St, Tbilisi",
+        contact_address:"📍 3 Ana Politkovskaia St",
+        mobile_address:"📍 3 Ana Politkovskaia St",
+        footer_address:"📍 3 Ana Politkovskaia St, Tbilisi",
+        visit_kicker:"Visit us",
+        visit_h2:"Stop by Siesta 365 in Tbilisi.",
+        visit_row1_label:"City / Area", visit_row1_val:"Tbilisi",
+        visit_row2_label:"Opening days", visit_row2_val:"Monday to Saturday",
+        visit_row3_label:"Opening hours", visit_row4_label:"Phone",
+        res_kicker:"Reservation",
+        res_h2:"Ready for a warm meal?",
+        res_p:"Order via Wolt or Glovo for quick delivery, or call us to reserve a table and ask about today's ready meals.",
+        footer:"© 2026 Siesta 365 · Family restaurant in Tbilisi"
+      },
+      ka: {
+        nav_menu:"მენიუ", nav_gallery:"გალერეა", nav_visit:"ვიზიტი",
+        eyebrow:"გახსნილია ორშაბ–შაბათ · 10:00–21:00",
+        hero_h1:"თბილი ოჯახური სამზარეულო თბილისის გულში.",
+        hero_p:"Siesta 365 — მყუდრო ოჯახური რესტორანი, სადაც მიირთმევთ სახლის სტილის კერძებს, სუფრის სალათებს, ვრაფებს, გამომცხვარ ნამცხვარებსა და სწრაფ კომფორტულ საკვებს ყოველდღიური სადილის, მშვიდი ვახშმის და მეგობრული შეხვედრისთვის.",
+        btn_wolt:"შეკვეთა Wolt-ით", btn_glovo:"შეკვეთა Glovo-ით", btn_call:"დარეკე 593 12 80 00",
+        meta_cuisine_key:"სამზარეულო:", meta_cuisine_val:"ოჯახური, ნებისმიერი",
+        meta_location_key:"მდებარეობა:", meta_location_val:"ანა პოლიტკოვსკაიას ქ. 3, თბილისი",
+        meta_style_key:"სტილი:", meta_style_val:"ოჯახური რესტორანი",
+        float_title:"სუფრული, სწრაფი, მყუდრო.",
+        float_p:"მზა კერძები, სახლის გემო და სასიამოვნო ადგილი ნებისმიერ დღეს.",
+        about_kicker:"Siesta 365-ის შესახებ",
+        about_h2:"მყუდრო ადგილი ნამდვილი ყოველდღიური საკვებისთვის.",
+        about_p1:"Siesta 365 აერთიანებს ოჯახური სამზარეულოს კომფორტს სისწრაფესა და მრავალფეროვნებასთან. მენიუ შედგება გემრიელი მზა კერძებიდან, სუფრის ინგრედიენტებიდან და ნაცნობი გემოებიდან — მარტივი, გულწრფელი და გულუხვი.",
+        about_p2:"შემოდი სწრაფი ნაჭმევისთვის, შეხვდი მეგობარს სადილად ან სტუმრობა ოჯახთან ერთად — თბილი, სუფრული და მარტივი.",
+        stat1:"ყოველდღიური კომფორტი", stat2:"სამუშაო საათები", stat3:"ადგილობრივი", stat3_val:"თბილისი",
+        menu_kicker:"გამორჩეული მენიუ",
+        menu_h2:"სიგნატური კერძები ნებისმიერი განწყობისთვის.",
+        menu_p:"სუფრის სალათებიდან გამომცხვარ კომფორტულ საკვებამდე — Siesta 365 შექმნილია მათთვის, ვინც ნამდვილ გემოს ეძებს გრძელი ლოდინის გარეშე.",
+        menu_more:"& ბევრი სხვა კერძი ჩვენს ყოველდღიურ მენიუში — გვკითხეთ, რა არის სუფრული დღეს.",
+        dish1_name:"კლაბ სენდვიჩი", dish1_tag:"სწრაფი ნაჭმევი",
+        dish1_p:"რბილი პური სუფრის ბოსტნეულით, ყველით და გემრიელი შიგთავსით — სადილის ან გასასვლელად იდეალური.",
+        dish2_name:"ჩიქენ ვრაფი", dish2_tag:"სუფრული",
+        dish2_p:"გემრიელი ვრაფი ნაზი ქათმით, ახლი კიტრით, პომიდვრითა და მწვანილებით რბილ ტორტილაში.",
+        dish3_name:"გამომცხვარი ნამცხვარი", dish3_tag:"ოჯახური",
+        dish3_p:"ოქროსფერი, თბილი და კომფორტული — სახლის სტილის გამომცხვარი საკვები.",
+        dish4_name:"სუფრის სალათის ბოული", dish4_tag:"მსუბუქი",
+        dish4_p:"ახლი სალათა, კიტრი, პომიდორი, ზეთისხილი, ხახვი და ყველი — ნათელი, განახლებული კვება.",
+        dish5_name:"კლასიკური ბურგერი", dish5_tag:"კომფორტული",
+        dish5_p:"წვნიანი, ყველიანი ფავორიტი — შინ ან გარეთ სიამოვნებისთვის.",
+        dish6_name:"პროტეინის ბოული", dish6_tag:"დაბალანსებული",
+        dish6_p:"ფერადი ბოული მწვანილებით, თინუსით, სიმინდით, კიტრითა და კარტოფილით — გამაძღობი, მაგრამ სუფრული.",
+        why_kicker:"რატომ ჩვენ",
+        why_h2:"შექმნილია სიმარტივის, სითბოსა და საიმედოობისთვის.",
+        why1_h3:"ყოველდღიური სუფრული მრავალფეროვნება",
+        why1_p:"მზა კერძების, სალათების, ვრაფებისა და კომფორტული საკვების ფართო არჩევანი.",
+        why2_h3:"ოჯახური ატმოსფერო",
+        why2_p:"მყუდრო, სასიამოვნო სივრცე, სადაც სტუმრები ნებისმიერ დღეს ჩამოვლენ სადილად.",
+        why3_h3:"სწრაფი მომსახურება",
+        why3_p:"სასადილო შესვენებების, გასასვლელი შეკვეთებისა და კარგი საკვების მოყვარულებისთვის.",
+        why4_h3:"ადგილობრივი თბილისში",
+        why4_p:"მარტივი ვიზიტი, მარტივი დარეკვა, გახსნილია ორშაბ–შაბათ დილიდან საღამომდე.",
+        gallery_kicker:"გალერეა",
+        gallery_h2:"ნამდვილი საკვები, ნამდვილი Siesta განწყობა.",
+        gallery_p:"ნათელი კერძები, მარტივი შეფუთვა, მყუდრო გარე სივრცე და Siesta 365-ის თბილი ადგილობრივი გარემო.",
+        test_kicker:"სტუმრების სიტყვები",
+        test_h2:"ადამიანები ბრუნდებიან კომფორტისთვის.",
+        test_p:"გამჭვირვალე, მარტივი რესტორნის გამოცდილება — გემო, მოხერხებულობა, თბილი სერვისი.",
+        review1_p:"“შესანიშნავი ადგილი სწრაფი სადილისთვის. საკვები სუფრულია, პორციები კარგია, ატმოსფერო კი ძალიან მეგობრული.”",
+        review2_p:"“ოჯახთან ერთად შევჩერდით და ყველამ სასურველი მოიძია. მყუდრო ადგილი, კარგი სერვისი და გემრიელი სახლის სტილის საკვები.”",
+        review3_p:"“სრულყოფილია გასასვლელად ან გარეთ მშვიდი ნაჭმევისთვის. ვრაფები და სალათები სუფრულია და ძალიან მოხერხებული.”",
+        visit_address_label:"მისამართი", visit_address_val:"ანა პოლიტკოვსკაიას ქ. 3, თბილისი",
+        contact_address:"📍 ანა პოლიტკოვსკაიას ქ. 3",
+        mobile_address:"📍 ანა პოლიტკოვსკაიას ქ. 3",
+        footer_address:"📍 ანა პოლიტკოვსკაიას ქ. 3, თბილისი",
+        visit_kicker:"გვეწვიეთ",
+        visit_h2:"Siesta 365-ში სტუმრობა, თბილისი.",
+        visit_row1_label:"ქალაქი / უბანი", visit_row1_val:"თბილისი",
+        visit_row2_label:"სამუშაო დღეები", visit_row2_val:"ორშაბათი–შაბათი",
+        visit_row3_label:"სამუშაო საათები", visit_row4_label:"ტელეფონი",
+        res_kicker:"დაჯავშნა",
+        res_h2:"მზად ხართ თბილი კერძისთვის?",
+        res_p:"შეუკვეთეთ Wolt-ით ან Glovo-თი სწრაფი მიტანისთვის, ან დაგვიკავშირდით მაგიდის დასაჯავშნად.",
+        footer:"© 2026 Siesta 365 · ოჯახური რესტორანი თბილისში"
+      }
+    };
+
+    let currentLang = 'en';
+
+    function setLang(lang) {
+      currentLang = lang;
+      document.documentElement.lang = lang;
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.dataset.i18n;
+        if (translations[lang][key] !== undefined) {
+          el.textContent = translations[lang][key];
+        }
+      });
+      document.querySelectorAll('[data-lang-btn]').forEach(btn => {
+        btn.textContent = lang === 'en' ? 'GE' : 'EN';
+      });
+      document.title = lang === 'en'
+        ? 'Siesta 365 — Family Restaurant in Tbilisi'
+        : 'Siesta 365 — ოჯახური რესტორანი თბილისში';
+    }
+
+    function toggleLang() {
+      setLang(currentLang === 'en' ? 'ka' : 'en');
+    }
+
+    function toggleMenu() {
+      const menu = document.getElementById('mobileMenu');
+      const btn  = document.getElementById('burgerBtn');
+      const open = menu.classList.toggle('open');
+      btn.classList.toggle('open', open);
+      document.body.style.overflow = open ? 'hidden' : '';
+    }
+
+    function closeMenu() {
+      const menu = document.getElementById('mobileMenu');
+      const btn  = document.getElementById('burgerBtn');
+      menu.classList.remove('open');
+      btn.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  </script>
+</body>
+</html>
